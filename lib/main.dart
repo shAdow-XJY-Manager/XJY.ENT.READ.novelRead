@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'package:flutter_common/flutter_common.dart';
 import 'package:novel_read/router/pc/pc_router.dart';
 
 void main() {
@@ -12,16 +13,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'shadow novel',
+      title: 'Shadow Novel',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.darkTheme(),
       initialRoute: '/',
       onGenerateRoute: pcGenerateRoute,
     );
   }
 }
-
 
