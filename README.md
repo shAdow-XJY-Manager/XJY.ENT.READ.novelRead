@@ -1,7 +1,7 @@
 # novel_read
 
 ## website
-[https://shadowplusing.website/novel_read/](https://shadowplusing.website/novel_read/)
+[https://shadowplusing.cn/XJY.ENT.READ.novelRead/](https://shadowplusing.cn/XJY.ENT.READ.novelRead/)
 
 ## reference
 1. [add flutter-web-plugins](https://stackoverflow.com/questions/64284952/this-package-does-not-have-flutter-web-plugins-in-the-dependencies-section-of)
