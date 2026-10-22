@@ -32,7 +32,6 @@ Future<void> mount(WidgetTester tester, Widget widget) async {
 }
 
 void main() {
-
   setUp(clearStorage);
 
   test('书目 JSON 往返保留章节顺序和完整正文', () {
@@ -40,8 +39,10 @@ void main() {
       jsonDecode(jsonEncode(book.toJson())) as Map<String, dynamic>,
     );
     expect(restored.toJson(), book.toJson());
-    expect(restored.chapters.map((chapter) => chapter.id),
-        ['later-id', 'earlier-id']);
+    expect(restored.chapters.map((chapter) => chapter.id), [
+      'later-id',
+      'earlier-id',
+    ]);
     expect(restored.chapters.first.text, '第一段正文。\n\n保留空行与标点。');
   });
 
@@ -51,7 +52,7 @@ void main() {
       await mount(tester, const NovelApp());
       expect(find.text('文字阅览'), findsOneWidget);
       expect(find.text('夜班频率'), findsOneWidget);
-      expect(find.text('目录 · 3 章'), findsOneWidget);
+      expect(find.text('章节目录'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   }
@@ -78,10 +79,11 @@ void main() {
     expect(find.text(book.chapters.last.text), findsOneWidget);
     expect(find.text('24 px'), findsOneWidget);
     expect(
-        tester
-            .widget<FilledButton>(find.widgetWithText(FilledButton, '已读到末章'))
-            .onPressed,
-        isNull);
+      tester
+          .widget<FilledButton>(find.widgetWithText(FilledButton, '已读到末章'))
+          .onPressed,
+      isNull,
+    );
     await tester.tap(find.text('上一章'));
     await tester.pump();
     expect(find.text('1 / 2 章'), findsOneWidget);
@@ -91,15 +93,18 @@ void main() {
     expect(saved['fraction'], 0);
     expect(saved['size'], 24);
     expect(
-        tester
-            .widget<OutlinedButton>(find.widgetWithText(OutlinedButton, '上一章'))
-            .onPressed,
-        isNull);
+      tester
+          .widget<OutlinedButton>(find.widgetWithText(OutlinedButton, '上一章'))
+          .onPressed,
+      isNull,
+    );
   });
 
   testWidgets('目录筛选后仍打开原章节索引', (tester) async {
-    await mount(tester,
-        const MaterialApp(home: NovelRead(book: book, showDirectory: true)));
+    await mount(
+      tester,
+      const MaterialApp(home: NovelRead(book: book, showDirectory: true)),
+    );
     await tester.enterText(find.byType(TextField), '第二');
     await tester.pump();
     final chapter = find.widgetWithText(ListTile, '第二章');
@@ -137,10 +142,11 @@ void main() {
 
   testWidgets('空书目显示明确状态', (tester) async {
     await mount(
-        tester,
-        const MaterialApp(
-          home: NovelRead(book: NovelBook('empty', '空书', '测试', [])),
-        ));
+      tester,
+      const MaterialApp(
+        home: NovelRead(book: NovelBook('empty', '空书', '测试', [])),
+      ),
+    );
     expect(find.text('这本书还没有章节。'), findsOneWidget);
     expect(find.text('下一章'), findsNothing);
     expect(tester.takeException(), isNull);
