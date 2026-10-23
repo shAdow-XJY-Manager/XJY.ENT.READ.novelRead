@@ -151,4 +151,52 @@ void main() {
     expect(find.text('下一章'), findsNothing);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('选择当前章节只关闭目录并保留滚动与进度，换章才回到顶部', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(390, 700));
+    final longBook = NovelBook('test-book', '长文测试书', '本地测试文本', [
+      NovelChapter(
+        'later-id',
+        '第一章',
+        List.filled(70, '这一段正文用于验证阅读位置，不应在重复选择当前章节时跳回开头。').join('\n\n'),
+      ),
+      NovelChapter(
+        'earlier-id',
+        '第二章',
+        List.filled(70, '第二章具有独立的阅读位置，切换进入时应从开头开始。').join('\n\n'),
+      ),
+    ]);
+    await mount(tester, MaterialApp(home: NovelRead(book: longBook)));
+    final scroll = tester
+        .widget<SingleChildScrollView>(find.byType(SingleChildScrollView))
+        .controller!;
+    expect(scroll.position.maxScrollExtent, greaterThan(0));
+    scroll.jumpTo(scroll.position.maxScrollExtent * .6);
+    await tester.pump(const Duration(milliseconds: 600));
+    final offset = scroll.offset;
+    final stored = html.window.localStorage[progressKey];
+    expect(jsonDecode(stored!)['fraction'], closeTo(.6, .001));
+
+    await tester.tap(find.byTooltip('章节目录'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ListTile, '第一章'));
+    await tester.pumpAndSettle();
+    expect(
+      tester.state<ScaffoldState>(find.byType(Scaffold)).isDrawerOpen,
+      isFalse,
+    );
+    expect(scroll.offset, closeTo(offset, .01));
+    expect(html.window.localStorage[progressKey], stored);
+
+    await tester.tap(find.byTooltip('章节目录'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ListTile, '第二章'));
+    await tester.pumpAndSettle();
+    expect(find.text('2 / 2 章'), findsOneWidget);
+    expect(scroll.offset, 0);
+    final changed = jsonDecode(html.window.localStorage[progressKey]!);
+    expect(changed['chapter'], 'earlier-id');
+    expect(changed['fraction'], 0);
+    expect(tester.takeException(), isNull);
+  });
 }

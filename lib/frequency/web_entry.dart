@@ -484,7 +484,8 @@ class _NovelReadState extends State<NovelRead> {
   }
 
   void select(int next) {
-    if (next < 0 || next >= widget.book.chapters.length) return;
+    if (next < 0 || next >= widget.book.chapters.length || next == index)
+      return;
     debounce?.cancel();
     setState(() {
       index = next;

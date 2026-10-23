@@ -81896,7 +81896,7 @@ try{q.Rb()
 s=q.a.c
 A.azt("frequency.novel.progress."+s.a,B.bI.F1(A.ap(["chapter",s.d[q.w].a,"fraction",q.y,"size",q.x],t.N,t.K),null))}catch(r){if(q.c!=null&&!q.d&&q.Q.length===0)q.ar(new A.aj6(q))}},
 zB(a,b){var s,r=this
-if(b<0||b>=r.a.c.d.length)return
+if(b<0||b>=r.a.c.d.length||b===r.w)return
 s=r.r
 if(s!=null)s.aS(0)
 r.ar(new A.aj7(r,b))
